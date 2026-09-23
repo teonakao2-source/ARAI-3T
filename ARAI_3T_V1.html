@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>ARAI 3T</title>
+<style>
+*{box-sizing:border-box}body{margin:0;font-family:Arial,sans-serif;background:#f4f5f7;color:#17202a}
+header{background:#18212b;color:white;padding:18px 16px;position:sticky;top:0;z-index:5}
+h1{margin:0;font-size:24px}header small{opacity:.75}
+nav{display:flex;gap:8px;padding:10px;background:white;position:sticky;top:70px;z-index:4;overflow:auto}
+nav button{border:0;border-radius:10px;padding:10px 13px;background:#e9edf1;white-space:nowrap}
+nav button.active{background:#18212b;color:white}
+main{max-width:760px;margin:auto;padding:14px}
+.card{background:white;border-radius:14px;padding:16px;margin-bottom:12px;box-shadow:0 2px 8px #00000010}
+h2{font-size:18px;margin:0 0 12px}.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+label{font-size:12px;font-weight:bold;color:#5b6570;display:block}input,select,textarea{width:100%;padding:11px;margin-top:5px;border:1px solid #d5dbe0;border-radius:9px;font-size:15px}
+.full{grid-column:1/-1}.status{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-top:5px}
+.status button{padding:9px;border:1px solid #d8dde2;border-radius:8px;background:#fff}.status button.sel{background:#18212b;color:#fff}
+.primary{width:100%;padding:13px;border:0;border-radius:10px;background:#18212b;color:white;font-size:16px;font-weight:bold}
+.machine{border-left:5px solid #9aa5af}.green{border-color:#2d8a55}.yellow{border-color:#d59b27}.red{border-color:#c74444}
+.hidden{display:none}.muted{color:#68737d;font-size:13px}.money{font-weight:bold}
+</style>
+</head>
+<body>
+<header><h1>ARAI 3T</h1><small>Inspección y control de excavadoras 3T</small></header>
+<nav>
+<button class="active" onclick="show('new',this)">Nueva</button>
+<button onclick="show('week',this)">Esta semana</button>
+<button onclick="show('stock',this)">Stock</button>
+<button onclick="show('history',this)">Historial</button>
+</nav>
+<main>
+
+<section id="new">
+<div class="card"><h2>① Identificación</h2><div class="grid">
+<label>Fecha<input id="date" type="date"></label><label>Hora<input id="time" type="time"></label>
+<label>Lote<input id="lot"></label><label>Marca<select id="brand"><option>Kubota</option><option>Komatsu</option><option>Yanmar</option><option>Hitachi</option><option>Otra</option></select></label>
+<label>Modelo<input id="model"></label><label>Año<input id="year"></label>
+<label>Nº serie<input id="serial"></label><label>Horas<input id="hours" type="number"></label>
+<label class="full">Foto de placa<input id="plate" type="file" accept="image/*" capture="environment"></label>
+</div></div>
+
+<div class="card"><h2>② Inspección</h2><div id="checks"></div></div>
+
+<div class="card"><h2>③ Fluidos y pintura</h2><div class="grid">
+<label>Aceite motor<select><option>Bueno</option><option>Regular</option><option>Malo</option></select></label>
+<label>Refrigerante<select><option>Bueno</option><option>Regular</option><option>Malo</option></select></label>
+<label>Aceite hidráulico<select><option>Bueno</option><option>Regular</option><option>Malo</option></select></label>
+<label>Pintura<select><option>Buena</option><option>Regular</option><option>Mala</option></select></label>
+</div></div>
+
+<div class="card"><h2>④ ARAI — resultado de subasta</h2><div class="grid">
+<label>Nuestra puja máxima ¥<input id="maxbid" type="number"></label>
+<label>Última puja REAL ¥<input id="realbid" type="number"></label>
+<label>ながれ mostrado ¥<input id="nagare" type="number"></label>
+<label>Precio comprado ¥<input id="buy" type="number"></label>
+<label class="full">Resultado<select id="result"><option>Compramos</option><option>Otro comprador</option><option>ながれ</option><option>No confirmado</option></select></label>
+</div></div>
+
+<div class="card"><h2>⑤ Decisión</h2><div class="grid">
+<label>Decisión<select id="decision"><option>Comprar</option><option>Depende del precio</option><option>No comprar</option></select></label>
+<label>Precio máximo recomendado ¥<input id="recommended" type="number"></label>
+<label class="full">Notas<textarea id="notes" rows="3"></textarea></label>
+</div><br><button class="primary" onclick="save()">GUARDAR INSPECCIÓN</button></div>
+</section>
+
+<section id="week" class="hidden"><div id="weekList"></div></section>
+<section id="stock" class="hidden"><div id="stockList"></div></section>
+<section id="history" class="hidden"><div id="historyList"></div></section>
+</main>
+<script>
+const items=['Motor','Hidráulica','Cilindros','Orugas','Estructura','Cabina','配管','Cuchara','Pintura','Pluma','Brazo','Giro','Traslación','Hoja','A/C'];
+let checks={};
+function build(){document.getElementById('date').value=new Date().toISOString().slice(0,10);items.forEach(x=>{checks[x]='OK';let d=document.createElement('div');d.className='card';d.innerHTML='<b>'+x+'</b><div class="status">'+['OK','REVISAR','PROBLEMA'].map(s=>`<button onclick="setStatus('${x}','${s}',this)">${s}</button>`).join('')+'</div>';document.getElementById('checks').appendChild(d)})}
+function setStatus(k,v,b){checks[k]=v;b.parentNode.querySelectorAll('button').forEach(x=>x.classList.remove('sel'));b.classList.add('sel')}
+function data(){let g=id=>document.getElementById(id).value;return {id:'ARAI-'+Date.now(),date:g('date'),time:g('time'),lot:g('lot'),brand:g('brand'),model:g('model'),year:g('year'),serial:g('serial'),hours:g('hours'),maxbid:g('maxbid'),realbid:g('realbid'),nagare:g('nagare'),buy:g('buy'),result:g('result'),decision:g('decision'),recommended:g('recommended'),notes:g('notes'),checks:{...checks}}}
+function save(){let a=JSON.parse(localStorage.getItem('arai3t')||'[]');a.unshift(data());localStorage.setItem('arai3t',JSON.stringify(a));alert('Inspección guardada');render();show('week',document.querySelectorAll('nav button')[1])}
+function card(x){let cls=x.result==='Compramos'?'green':x.result==='ながれ'?'yellow':'red';return `<div class="card machine ${cls}"><h2>${x.brand} ${x.model||''}</h2><div class="muted">Lote ${x.lot||'-'} · ${x.date||''} ${x.time||''}</div><p>Última puja real: <span class="money">¥${Number(x.realbid||0).toLocaleString()}</span><br>ながれ: <span class="money">¥${Number(x.nagare||0).toLocaleString()}</span><br>Nuestra máxima: <span class="money">¥${Number(x.maxbid||0).toLocaleString()}</span></p><b>${x.result}</b></div>`}
+function render(){let a=JSON.parse(localStorage.getItem('arai3t')||'[]');document.getElementById('weekList').innerHTML=a.length?a.slice(0,12).map(card).join(''):'<div class="card">Todavía no hay inspecciones.</div>';document.getElementById('historyList').innerHTML=a.length?a.map(card).join(''):'<div class="card">Historial vacío.</div>';document.getElementById('stockList').innerHTML=a.filter(x=>x.result==='Compramos').map(card).join('')||'<div class="card">No hay máquinas en stock.</div>'}
+function show(id,b){['new','week','stock','history'].forEach(x=>document.getElementById(x).classList.toggle('hidden',x!==id));document.querySelectorAll('nav button').forEach(x=>x.classList.remove('active'));b.classList.add('active');render()}
+build();render();
+</script>
+</body>
+</html>
