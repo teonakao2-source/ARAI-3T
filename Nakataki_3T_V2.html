@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Nakataki 3T</title>
+<link rel="icon" type="image/png" href="nakataki-3t-icon-512.png">
+<link rel="apple-touch-icon" href="nakataki-3t-icon-180.png">
+<meta name="apple-mobile-web-app-title" content="Nakataki 3T">
+<meta name="theme-color" content="#1f2937">
+<style>
+*{box-sizing:border-box}
+body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;background:#f3f4f6;color:#172033}
+header{background:#1f2937;color:white;padding:18px 16px 14px;position:sticky;top:0;z-index:10}
+header h1{margin:0;font-size:25px}
+header small{opacity:.8}
+nav{display:grid;grid-template-columns:repeat(4,1fr);gap:7px;background:white;padding:9px;position:sticky;top:72px;z-index:9;border-bottom:1px solid #ddd}
+nav button{border:0;border-radius:10px;padding:11px 5px;font-weight:700;background:#e5e7eb;color:#263244;font-size:13px}
+nav button.active{background:#2563eb;color:white}
+main{padding:14px;max-width:900px;margin:auto}
+section{display:none}
+section.active{display:block}
+.card{background:white;border-radius:14px;padding:15px;margin-bottom:14px;box-shadow:0 2px 8px rgba(0,0,0,.08)}
+h2{margin:3px 0 14px;font-size:21px}
+h3{margin:0 0 10px}
+.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+.field label{display:block;font-size:12px;font-weight:700;color:#4b5563;margin-bottom:4px}
+input,select,textarea{width:100%;padding:10px;border:1px solid #cbd5e1;border-radius:9px;background:white;font-size:15px}
+textarea{min-height:75px;resize:vertical}
+.full{grid-column:1/-1}
+.photo{border:2px dashed #cbd5e1;padding:12px;border-radius:10px;background:#f8fafc}
+.photo img{max-width:100%;max-height:220px;display:block;margin:8px auto;border-radius:8px}
+.checkgrid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
+.check{display:flex;align-items:center;gap:7px;background:#f8fafc;padding:8px;border-radius:8px;font-size:14px}
+.check input{width:auto}
+.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}
+.btn{border:0;border-radius:10px;padding:12px 15px;font-weight:700;font-size:14px}
+.primary{background:#2563eb;color:white}
+.green{background:#15803d;color:white}
+.red{background:#dc2626;color:white}
+.gray{background:#e5e7eb;color:#111827}
+.machine{border:1px solid #dbe1ea;border-radius:12px;padding:13px;margin-bottom:12px;background:#fff}
+.machine .top{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}
+.badge{padding:5px 8px;border-radius:999px;font-size:11px;font-weight:800;background:#e5e7eb;white-space:nowrap}
+.badge.buy{background:#dcfce7;color:#166534}.badge.review{background:#fef3c7;color:#92400e}.badge.no{background:#fee2e2;color:#991b1b}
+.info{display:grid;grid-template-columns:repeat(2,1fr);gap:6px;margin:10px 0;font-size:13px}
+.info div{background:#f8fafc;padding:7px;border-radius:7px}
+.details{display:none;margin-top:10px;border-top:1px solid #e5e7eb;padding-top:10px}
+.details.open{display:block}
+.detailgrid{display:grid;grid-template-columns:repeat(2,1fr);gap:6px;font-size:13px}
+.detailgrid div{padding:7px;background:#f8fafc;border-radius:7px}
+.empty{text-align:center;color:#6b7280;padding:30px 10px}
+.notice{padding:10px 12px;border-radius:9px;background:#eff6ff;color:#1e40af;font-size:13px;margin-bottom:12px}
+@media(max-width:600px){
+ .grid,.checkgrid,.info,.detailgrid{grid-template-columns:1fr}
+ nav button{font-size:12px;padding:10px 2px}
+ header{position:static} nav{top:0}
+}
+</style>
+</head>
+<body>
+<header>
+  <h1>Nakataki 3T</h1>
+  <small>Control de excavadoras 3 toneladas</small>
+</header>
+
+<nav>
+  <button id="navNew" onclick="showSection('new')">Nueva</button>
+  <button id="navWeek" onclick="showSection('week')">Esta semana</button>
+  <button id="navStock" onclick="showSection('stock')">Stock</button>
+  <button id="navHistory" onclick="showSection('history')">Historial</button>
+</nav>
+
+<main>
+<section id="new" class="active">
+  <h2>Nueva inspección</h2>
+  <div class="notice">Cada inspección queda guardada en este dispositivo. Puedes registrar máquinas aunque finalmente no las compres.</div>
+
+  <div class="card">
+    <h3>Identificación</h3>
+    <div class="grid">
+      <div class="field"><label>Fecha</label><input id="date" type="date"></div>
+      <div class="field"><label>Hora</label><input id="time" type="time"></div>
+      <div class="field"><label>Lot</label><input id="lot"></div>
+      <div class="field"><label>Marca</label><input id="brand"></div>
+      <div class="field"><label>Modelo</label><input id="model"></div>
+      <div class="field"><label>Año</label><input id="year" type="number"></div>
+      <div class="field"><label>Número de serie</label><input id="serial"></div>
+      <div class="field"><label>Horas</label><input id="hours" type="number"></div>
+      <div class="field full"><label>Foto de placa</label><div class="photo"><input id="platePhoto" type="file" accept="image/*" onchange="previewPhoto(this)"><img id="photoPreview" style="display:none"></div></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>Inspección rápida</h3>
+    <div class="checkgrid" id="checks"></div>
+    <div class="grid" style="margin-top:10px">
+      <div class="field"><label>Estado general</label><select id="status"><option value="OK">OK</option><option value="REVIEW">REVIEW</option><option value="PROBLEM">PROBLEM</option></select></div>
+      <div class="field"><label>Pintura</label><select id="paint"><option>Buena</option><option>Regular</option><option>Mala</option></select></div>
+      <div class="field"><label>Aceite motor</label><select id="engineOil"><option>OK</option><option>Bajo</option><option>Sucio</option><option>No revisado</option></select></div>
+      <div class="field"><label>Agua radiador</label><select id="coolant"><option>OK</option><option>Bajo</option><option>Sucio</option><option>No revisado</option></select></div>
+      <div class="field"><label>Aceite hidráulico</label><select id="hydraulicOil"><option>OK</option><option>Bajo</option><option>Sucio</option><option>No revisado</option></select></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>Subasta</h3>
+    <div class="grid">
+      <div class="field"><label>Nuestra oferta máxima ¥</label><input id="ourMax" type="number"></div>
+      <div class="field"><label>Última oferta real ¥</label><input id="lastRealBid" type="number"></div>
+      <div class="field"><label>Precio ながれ mostrado ¥</label><input id="nagare" type="number"></div>
+      <div class="field"><label>Precio de compra ¥</label><input id="purchase" type="number"></div>
+      <div class="field"><label>Resultado</label><select id="outcome"><option>Sin decidir</option><option>Comprada</option><option>Otro comprador</option><option>Nagare</option><option>No comprada</option><option>Otro</option></select></div>
+      <div class="field"><label>¿Comprador real confirmado?</label><select id="realBuyer"><option>Desconocido</option><option>Sí</option><option>No</option></select></div>
+      <div class="field"><label>Decisión</label><select id="decision"><option>Comprar</option><option>Depende del precio</option><option>No comprar</option></select></div>
+      <div class="field"><label>Máximo recomendado ¥</label><input id="recommended" type="number"></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>Notas</h3>
+    <textarea id="notes" placeholder="Defectos, reparaciones, observaciones..."></textarea>
+    <div class="actions">
+      <button class="btn green" onclick="saveInspection()">Guardar inspección</button>
+      <button class="btn gray" onclick="clearNew()">Limpiar</button>
+    </div>
+  </div>
+</section>
+
+<section id="week">
+  <h2>Esta semana</h2>
+  <div id="weekList"></div>
+</section>
+
+<section id="stock">
+  <h2>Stock</h2>
+  <div id="stockList"></div>
+</section>
+
+<section id="history">
+  <h2>Historial</h2>
+  <div id="historyList"></div>
+</section>
+</main>
+
+<script>
+const CHECKS=["Motor","Hidráulica","Cilindros","Orugas","Estructura","Cabina","配管","Cucharón","Pintura","Boom","Arm","Swing","Travel","Blade","A/C"];
+const STORAGE="arai3t_records_v2";
+
+function $(id){return document.getElementById(id)}
+function records(){try{return JSON.parse(localStorage.getItem(STORAGE)||"[]")}catch(e){return []}}
+function saveRecords(a){localStorage.setItem(STORAGE,JSON.stringify(a))}
+function esc(s){return String(s??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[m]))}
+
+function init(){
+  $("checks").innerHTML=CHECKS.map((x,i)=>`<label class="check"><input type="checkbox" id="check_${i}"> ${esc(x)}</label>`).join("");
+  setDateTime();
+  renderAll();
+  showSection("new");
+}
+function setDateTime(){
+  const d=new Date();
+  $("date").value=d.toISOString().slice(0,10);
+  $("time").value=d.toTimeString().slice(0,5);
+}
+function showSection(id){
+  ["new","week","stock","history"].forEach(x=>$ (x).classList.toggle("active",x===id));
+  ["navNew","navWeek","navStock","navHistory"].forEach(x=>$ (x).classList.remove("active"));
+  const map={new:"navNew",week:"navWeek",stock:"navStock",history:"navHistory"};
+  $(map[id]).classList.add("active");
+  if(id!=="new") renderAll();
+  window.scrollTo({top:0,behavior:"smooth"});
+}
+function clearNew(){
+  document.querySelectorAll("#new input,#new textarea").forEach(el=>{
+    if(el.type==="checkbox"||el.type==="file") el.checked=false,el.value="";
+    else el.value="";
+  });
+  document.querySelectorAll("#new select").forEach(el=>el.selectedIndex=0);
+  $("photoPreview").style.display="none";
+  $("photoPreview").src="";
+  setDateTime();
+}
+function newInspection(){clearNew();showSection("new")}
+function previewPhoto(input){
+  const f=input.files&&input.files[0]; if(!f)return;
+  const r=new FileReader(); r.onload=e=>{$("photoPreview").src=e.target.result;$("photoPreview").style.display="block"}; r.readAsDataURL(f);
+}
+function getVal(id){return $(id).value}
+function saveInspection(){
+  const r=records();
+  const id="ARAI-3T-"+String(Date.now());
+  const checks={}; CHECKS.forEach((x,i)=>checks[x]=$("check_"+i).checked);
+  const rec={
+    id,date:getVal("date"),time:getVal("time"),lot:getVal("lot"),brand:getVal("brand"),
+    model:getVal("model"),year:getVal("year"),serial:getVal("serial"),hours:getVal("hours"),
+    status:getVal("status"),paint:getVal("paint"),engineOil:getVal("engineOil"),coolant:getVal("coolant"),
+    hydraulicOil:getVal("hydraulicOil"),ourMax:getVal("ourMax"),lastRealBid:getVal("lastRealBid"),
+    nagare:getVal("nagare"),purchase:getVal("purchase"),outcome:getVal("outcome"),
+    realBuyer:getVal("realBuyer"),decision:getVal("decision"),recommended:getVal("recommended"),
+    notes:getVal("notes"),checks,photo:$("photoPreview").src||""
+  };
+  if(!rec.lot&&!rec.brand&&!rec.model){alert("Introduce al menos Lot, marca o modelo.");return}
+  r.unshift(rec);saveRecords(r);
+  alert("Inspección guardada.");
+  clearNew();
+  renderAll();
+}
+function badge(dec){
+  if(dec==="Comprar")return '<span class="badge buy">COMPRAR</span>';
+  if(dec==="No comprar")return '<span class="badge no">NO COMPRAR</span>';
+  return '<span class="badge review">DEPENDE</span>';
+}
+function machineCard(x){
+  const checked=CHECKS.filter(k=>x.checks&&x.checks[k]).join(", ")||"Ninguno marcado";
+  const detailId="d_"+x.id;
+  return `<div class="machine">
+    <div class="top"><div><strong>${esc(x.brand)} ${esc(x.model)}</strong><div style="font-size:12px;color:#6b7280">${esc(x.id)}</div></div>${badge(x.decision)}</div>
+    <div class="info">
+      <div><b>Lot:</b> ${esc(x.lot)}</div><div><b>Fecha:</b> ${esc(x.date)} ${esc(x.time)}</div>
+      <div><b>Año:</b> ${esc(x.year)}</div><div><b>Horas:</b> ${esc(x.hours)}</div>
+      <div><b>Serie:</b> ${esc(x.serial)}</div><div><b>Última oferta real:</b> ¥${fmt(x.lastRealBid)}</div>
+      <div><b>Nagare mostrado:</b> ¥${fmt(x.nagare)}</div><div><b>Nuestra máxima:</b> ¥${fmt(x.ourMax)}</div>
+      <div><b>Compra:</b> ¥${fmt(x.purchase)}</div><div><b>Resultado:</b> ${esc(x.outcome)}</div>
+    </div>
+    <div class="actions">
+      <button class="btn primary" onclick="toggleDetails('${esc(detailId)}')">Ver ficha completa</button>
+      <button class="btn red" onclick="deleteInspection('${esc(x.id)}')">Eliminar</button>
+    </div>
+    <div id="${esc(detailId)}" class="details">
+      <h3>Ficha completa</h3>
+      <div class="detailgrid">
+        <div><b>Estado:</b> ${esc(x.status)}</div><div><b>Pintura:</b> ${esc(x.paint)}</div>
+        <div><b>Aceite motor:</b> ${esc(x.engineOil)}</div><div><b>Radiador:</b> ${esc(x.coolant)}</div>
+        <div><b>Aceite hidráulico:</b> ${esc(x.hydraulicOil)}</div><div><b>Comprador real:</b> ${esc(x.realBuyer)}</div>
+        <div><b>Decisión:</b> ${esc(x.decision)}</div><div><b>Máximo recomendado:</b> ¥${fmt(x.recommended)}</div>
+        <div class="full"><b>Inspección marcada:</b> ${esc(checked)}</div>
+        <div class="full"><b>Notas:</b> ${esc(x.notes)||"—"}</div>
+      </div>
+      ${x.photo?`<div style="margin-top:10px"><b>Foto de placa:</b><img src="${x.photo}" style="max-width:100%;max-height:250px;border-radius:8px;display:block;margin-top:6px"></div>`:""}
+    </div>
+  </div>`;
+}
+function fmt(v){if(v===undefined||v===null||v==="")return "—";return Number(v).toLocaleString("ja-JP")}
+function toggleDetails(id){$(id).classList.toggle("open")}
+function deleteInspection(id){
+  const r=records(), x=r.find(a=>a.id===id);
+  if(!x)return;
+  if(!confirm(`¿Eliminar la inspección de ${x.brand||""} ${x.model||""}, Lot ${x.lot||""}?`))return;
+  saveRecords(r.filter(a=>a.id!==id));
+  renderAll();
+}
+function renderList(id,list){
+  $(id).innerHTML=list.length?list.map(machineCard).join(""):'<div class="card empty">No hay inspecciones registradas.</div>';
+}
+function renderAll(){
+  const r=records();
+  const now=new Date(), monday=new Date(now); monday.setDate(now.getDate()-((now.getDay()+6)%7)); monday.setHours(0,0,0,0);
+  const week=r.filter(x=>{const d=new Date((x.date||"1970-01-01")+"T00:00:00");return d>=monday});
+  const stock=r.filter(x=>x.outcome==="Comprada");
+  renderList("weekList",week);
+  renderList("stockList",stock);
+  renderList("historyList",r);
+}
+document.addEventListener("DOMContentLoaded",init);
+</script>
+</body>
+</html>
